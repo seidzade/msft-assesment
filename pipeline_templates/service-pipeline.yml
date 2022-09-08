@@ -19,16 +19,16 @@ parameters:
   default: '1.0.0'
 - name: subscriptionId
   type: string
-  default: '6d10db2a-9f4b-4ece-b588-91692c426aa1'
+  default: ''
 - name: subscriptionName        
   type: string
-  default: 'General-2'
+  default: ''
 - name: envType
   type: string
   default: 'dev'
 - name: clientId
   type: string
-  default: '4c1a2229-c322-4282-8860-de370eb93d33'
+  default: ''
 - name: aksResourceGroup
   type: string
   default: dev-aks

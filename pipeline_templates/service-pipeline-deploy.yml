@@ -10,16 +10,16 @@ parameters:
   default: '1.0.0'
 - name: subscriptionId
   type: string
-  default: '856304bc-999e-4655-a012-a8e449450b77'
+  default: ''
 - name: subscriptionName        
   type: string
-  default: 'Prod-JapanEast-BOS-1'
+  default: ''
 - name: envType
   type: string
   default: 'msft_demo'
 - name: clientId
   type: string
-  default: '4c1a2229-c322-4282-8860-de370eb93d33'
+  default: ''
 - name: aksResourceGroup
   type: string
   default: dev-aks
@@ -28,8 +28,8 @@ parameters:
   default: devops-poc-cluster
 - name: tenant
   type: string
-  default: 63951129-8e3e-496a-bf4c-2d98507a3d13
-
+  default: ''
+ 
 jobs:
 - deployment: ${{ parameters.envType }}_deploy
 
