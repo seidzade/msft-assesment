@@ -1,0 +1,76 @@
+parameters:
+- name: 'vmImage'
+  default: 'ubuntu-20.04'
+  type: string
+- name: serviceName
+  type: string
+  default: ''
+- name: version
+  type: string
+  default: '1.0.0'
+- name: subscriptionId
+  type: string
+  default: '856304bc-999e-4655-a012-a8e449450b77'
+- name: subscriptionName        
+  type: string
+  default: 'Prod-JapanEast-BOS-1'
+- name: envType
+  type: string
+  default: 'msft_demo'
+- name: clientId
+  type: string
+  default: '4c1a2229-c322-4282-8860-de370eb93d33'
+- name: aksResourceGroup
+  type: string
+  default: dev-aks
+- name: aksClusterName
+  type: string
+  default: devops-poc-cluster
+- name: tenant
+  type: string
+  default: 63951129-8e3e-496a-bf4c-2d98507a3d13
+
+jobs:
+- deployment: ${{ parameters.envType }}_deploy
+
+  pool: 
+    vmImage: ${{ parameters.vmImage }}
+
+  variables:
+    - group: creg
+    
+  environment: ${{ parameters.envType }}
+  strategy:
+    runOnce: 
+      deploy:
+        steps:
+        - checkout: self
+
+        # connect to aks
+        - task: AzureCLI@2
+          inputs:
+            azureSubscription: '${{parameters.subscriptionName}} (${{parameters.subscriptionId}})'
+            scriptType: 'bash'
+            scriptLocation: 'inlineScript'
+            inlineScript: |
+              az aks get-credentials --resource-group ${{parameters.aksResourceGroup}} --name ${{parameters.aksClusterName}} 
+          displayName: connect to k8s
+
+        # Helm Login
+        - bash: |
+            helm registry login $(Registry) --username $(RegistryUser) --password $(RegistryPass)
+          displayName: helm login
+
+        # Deploy Helm     
+        - bash: |                                                        
+              az acr helm repo add -n $(Registry) --password $(RegistryPass) --username $(RegistryUser)
+              helm repo update
+              helm upgrade --install ${{ parameters.serviceName }}-release oci://$(Registry)/helm/${{ parameters.serviceName }} \
+                --version ${{ parameters.version }}-$(Build.BuildNumber)
+          displayName: helm deploy
+
+                 
+          
+
+            
+       

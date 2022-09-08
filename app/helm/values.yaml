@@ -1,0 +1,30 @@
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    path: /*
+
+service:
+  type: ClusterIP
+  port: 80
+
+deployment:
+  replicaCount: 1
+  container:
+    image:
+      repository: "acrgitopsdev.azurecr.io/app"
+      tag: ""
+      pullPolicy: IfNotPresent
+    port: 80
+  
+  nodeSelector:
+    beta.kubernetes.io/instance-type: Standard_B2s
+
+  resources: {}
+
+  tolerations: []
+
+  affinity: {}
+

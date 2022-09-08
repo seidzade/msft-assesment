@@ -1,0 +1,9 @@
+parameters:
+  - name: pathToFile
+    type: string   
+
+steps:
+  - bash: |       
+        helm registry login $(Registry) --username $(RegistryUser) --password $(RegistryPass)
+        helm push ${{ parameters.pathToFile }} oci://$(Registry)/helm
+    displayName: helm push

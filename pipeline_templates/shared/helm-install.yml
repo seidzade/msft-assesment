@@ -1,0 +1,11 @@
+parameters:
+- name: helmVersionToInstall
+  type: string
+  default: 'latest'
+
+steps:
+  # Install Helm 
+- task: HelmInstaller@1
+  displayName: helm installer
+  inputs: 
+    helmVersionToInstall: ${{ parameters.helmVersionToInstall }}

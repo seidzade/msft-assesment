@@ -1,0 +1,71 @@
+parameters:
+- name: 'vmImage'
+  default: 'ubuntu-20.04'
+  type: string
+- name: serviceName
+  type: string
+  default: ''
+- name: dockerfilePath
+  type: string
+  default: 'Dockerfile'
+- name: helmVersionToInstall
+  type: string
+  default: 'latest'
+- name: version
+  type: string
+  default: '1.0.0'
+- name: subscriptionId
+  type: string
+  default: '6d10db2a-9f4b-4ece-b588-91692c426aa1'
+- name: subscriptionName        
+  type: string
+  default: 'General-2'
+- name: clientId
+  type: string
+  default: '4c1a2229-c322-4282-8860-de370eb93d33'
+
+
+jobs:
+  
+  - job: 'app_pipeline'
+    
+    pool: 
+      vmImage: ${{ parameters.vmImage }}
+
+    variables:
+      - group: creg
+      - name: buildName
+
+    steps:
+    - checkout: self
+      persistCredentials: true
+
+    # Docker Build
+    - template: shared/docker-build.yml
+      parameters:
+        serviceName: ${{ parameters.serviceName }}
+        version: ${{ parameters.version }}
+        dockerfilePath: ${{ parameters.dockerfilePath }}
+
+    # Docker Push
+    - template: shared/docker-push.yml
+      parameters:
+        serviceName: ${{ parameters.serviceName }}
+        version: ${{ parameters.version }}  
+
+    # Helm Install
+    - template: shared/helm-install.yml
+      parameters:
+        helmVersionToInstall: ${{ parameters.helmVersionToInstall }}      
+
+    # Helm Package
+    - template: shared/helm-package.yml
+      parameters:
+        fullVersion: ${{ parameters.version }}-$(Build.BuildNumber)         
+        packageSource: "helm"
+        packageDestination: "helm"          
+
+    # # Helm Push
+    - template: shared/helm-push.yml
+      parameters:
+        pathToFile: helm/${{ parameters.serviceName }}-${{ parameters.version }}-$(Build.BuildNumber).tgz

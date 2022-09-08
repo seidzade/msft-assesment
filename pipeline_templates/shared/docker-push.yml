@@ -1,0 +1,15 @@
+parameters:
+  - name: serviceName
+    type: string
+  - name: version
+    type: string
+    default: '1.0.0'
+
+steps:
+- task: Powershell@2
+  inputs:
+    targetType: 'inline'
+    script: |
+      docker login $(Registry) -u $(RegistryUser) -p $(RegistryPass)
+      docker push $(Registry)/${{ parameters.serviceName }}:${{ parameters.version }}-$(Build.BuildNumber)
+  displayName: 'docker push'

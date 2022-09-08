@@ -1,0 +1,21 @@
+parameters:
+- name: clientId
+  type: string
+- name: clientSecret
+  type: string
+- name: subscriptionId
+  type: string
+- name: subscriptionName
+  type: string
+- name: displayName
+  type: string
+  default: 'az login'
+
+steps:
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: '${{parameters.subscriptionName}} (${{parameters.subscriptionId}})'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: 'az login --service-principal -u=${{ parameters.clientId }} -p=${{ parameters.clientSecret }} --tenant=63951129-8e3e-496a-bf4c-2d98507a3d13'
+  displayName: ${{ parameters.displayName }}

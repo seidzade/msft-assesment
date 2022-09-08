@@ -1,0 +1,54 @@
+parameters:
+- name: 'vmImage'
+  default: 'ubuntu-20.04'
+  type: string
+- name: version
+  type: string
+  default: '20.07.0'
+- name: serviceName
+  type: string
+  default: ''
+- name: dockerfilePath
+  type: string
+  default: 'Dockerfile'
+- name: helmVersionToInstall
+  type: string
+  default: 'latest'
+- name: helmReleaseNumber
+  type: string
+  default: '1.0.0'
+- name: subscriptionId
+  type: string
+  default: '6d10db2a-9f4b-4ece-b588-91692c426aa1'
+- name: subscriptionName        
+  type: string
+  default: 'General-2'
+- name: envType
+  type: string
+  default: 'dev'
+- name: clientId
+  type: string
+  default: '4c1a2229-c322-4282-8860-de370eb93d33'
+- name: aksResourceGroup
+  type: string
+  default: dev-aks
+- name: aksClusterName
+  type: string
+  default: devops-poc-cluster
+
+stages:
+- stage: build
+  jobs:        
+  - template: service-pipeline-build.yml
+    parameters: 
+      version: ${{ parameters.version }}
+      serviceName: ${{ parameters.serviceName }}
+- stage: demo
+  dependsOn: ['build']
+  jobs:
+  - template: service-pipeline-deploy.yml
+    parameters: 
+      serviceName: ${{ parameters.serviceName }}
+      version: ${{ parameters.version }}
+      aksClusterName: ${{ parameters.aksClusterName}}
+      aksResourceGroup: ${{ parameters.aksResourceGroup}}

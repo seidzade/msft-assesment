@@ -1,0 +1,16 @@
+parameters:
+  - name: packageSource
+    type: string
+  - name: packageDestination
+    type: string  
+  - name: fullVersion
+    type: string  
+
+steps:
+- bash: |  
+        cd  ${{ parameters.packageSource }} 
+        mkdir -p charts
+        helm dependency update .
+        cd ..                        
+        helm package ${{ parameters.packageSource }} --destination ${{ parameters.packageDestination }} --version ${{ parameters.fullVersion }} --app-version ${{ parameters.fullVersion }}
+  displayName: helm package 

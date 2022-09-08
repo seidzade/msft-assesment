@@ -1,0 +1,19 @@
+resources:
+  repositories: 
+    - repository: pipeline_templates
+      type: git 
+      name: test/pipeline_templates
+      ref: main
+
+trigger:
+- main
+
+stages:
+- template: service-pipeline.yml@pipeline_templates
+  parameters:
+    serviceName: app
+    version: '3.0.0'
+    aksClusterName: msft-demo-aks
+    aksResourceGroup: msft-demo-rg
+
+    

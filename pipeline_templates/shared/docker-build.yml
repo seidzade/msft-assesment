@@ -1,0 +1,25 @@
+parameters:
+  - name: serviceName
+    type: string
+  - name: version
+    type: string
+    default: '1.0.0'
+  - name: dockerBuildArgs
+    type: string
+    default: ""
+  - name: dockerFilePath
+    type: string
+  - name: dockerBuildContext
+    type: string
+    default: "."
+
+steps:
+  - task: Docker@2
+    displayName: docker build
+    inputs:
+      command: build
+      repository: $(Registry)/${{ parameters.serviceName }}
+      tags: ${{ parameters.version }}-$(Build.BuildNumber)
+      arguments: ${{ parameters.dockerBuildArgs }}
+      dockerfile: ${{ parameters.dockerFilePath }}
+      buildContext: ${{ parameters.dockerBuildContext }}
